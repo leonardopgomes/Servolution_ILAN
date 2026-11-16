@@ -1,18 +1,14 @@
 // ============================================================
 // CONFIGURAÇÃO DO BANCO COMPARTILHADO (Firebase Realtime Database)
 // ============================================================
-// O GitHub Pages só hospeda arquivos estáticos. Para que TODOS os
-// voluntários vejam as mesmas vagas e nomes em tempo real, é preciso um
-// banco online gratuito. Siga o passo a passo do README.md e cole aqui os
-// dados do seu projeto Firebase.
-//
-// Enquanto este arquivo estiver com valores vazios, o sistema funciona
-// em "modo teste": os dados ficam só no navegador de cada pessoa.
+// Projeto Firebase: servolutuion
+// Estes valores são públicos por natureza; quem protege os dados são as
+// regras do Realtime Database (veja o README.md).
 
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  appId: ""
+  apiKey: "AIzaSyAtu-d7fxk1kyDksxc5CxRV0mfIQIBtSfc",
+  authDomain: "servolutuion.firebaseapp.com",
+  databaseURL: "https://servolutuion-default-rtdb.firebaseio.com",
+  projectId: "servolutuion",
+  appId: "1:250413924764:web:8532381d5a5599f07e0859"
 };
