@@ -16,6 +16,7 @@
   const iso = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
   const deIso = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
   const br = s => { const [y, m, d] = s.split('-'); return d + '/' + m + '/' + y; };
+  const norm = x => String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
   const hojeD = (() => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); })();
   const valida = d => (d.getDay() === 0 || d.getDay() === 4) && d >= hojeD;
 
@@ -48,6 +49,11 @@
         return raiz.child(data).child(hora).child(slot)
           .transaction(atual => (atual ? undefined : nome))   // só grava se estiver livre
           .then(r => r.committed);
+      },
+      cancelar(data, hora, slot, nome) {
+        return raiz.child(data).child(hora).child(slot)
+          .transaction(atual => (atual && norm(atual) === norm(nome) ? null : undefined))  // só apaga se ainda for o mesmo nome
+          .then(r => r.committed);
       }
     };
   } else {
@@ -63,6 +69,15 @@
         d[data] = d[data] || {}; d[data][hora] = d[data][hora] || {};
         if (d[data][hora][slot]) return Promise.resolve(false);
         d[data][hora][slot] = nome;
+        localStorage.setItem(CH, JSON.stringify(d));
+        dados = d; render();
+        return Promise.resolve(true);
+      },
+      cancelar(data, hora, slot, nome) {
+        const d = ler();
+        const atual = d[data] && d[data][hora] && d[data][hora][slot];
+        if (!atual || norm(atual) !== norm(nome)) return Promise.resolve(false);
+        delete d[data][hora][slot];
         localStorage.setItem(CH, JSON.stringify(d));
         dados = d; render();
         return Promise.resolve(true);
@@ -138,15 +153,25 @@
       for (let i = 1; i <= area.n; i++) {
         const slot = area.id + '_' + i;
         const nome = ocupados[slot];
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'slot ' + (nome ? 'ocupado' : 'livre');
         const n = document.createElement('span'); n.className = 'n'; n.textContent = i + '-';
         const t = document.createElement('span'); t.className = 't';
-        t.textContent = nome ? nome : 'Livre – toque para entrar';
-        b.append(n, t);
-        if (nome) b.disabled = true;
-        else b.addEventListener('click', () => reservar(slot, area.nome, i));
+        let b;
+        if (nome) {
+          b = document.createElement('div');
+          b.className = 'slot ocupado';
+          t.textContent = nome;
+          const c = document.createElement('button');
+          c.type = 'button'; c.className = 'cancelar'; c.textContent = 'Cancelar';
+          c.addEventListener('click', () => cancelar(slot, area.nome, i, nome));
+          b.append(n, t, c);
+        } else {
+          b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'slot livre';
+          t.textContent = 'Livre – toque para entrar';
+          b.append(n, t);
+          b.addEventListener('click', () => reservar(slot, area.nome, i));
+        }
         grid.appendChild(b);
       }
       sec.appendChild(grid);
@@ -189,6 +214,22 @@
       toast(ok ? `${nome} adicionado(a) em ${areaNome} ${i}.` : 'Esse campo acabou de ser ocupado. Escolha outro.');
     } catch (e) {
       toast('Erro ao salvar. Verifique a conexão.');
+    }
+  }
+
+  // Cancela o próprio cadastro: o nome digitado em "Seu nome" precisa ser o mesmo da vaga
+  async function cancelar(slot, areaNome, i, nomeSlot) {
+    const nome = elNome.value.trim();
+    if (!nome || norm(nome) !== norm(nomeSlot)) {
+      toast('Para cancelar, digite em "Seu nome" o mesmo nome do cadastro.');
+      elNome.focus(); return;
+    }
+    if (!confirm(`Cancelar o cadastro de ${nomeSlot} em ${areaNome} ${i}\n(${br(selData)} – ${elHora.value})?`)) return;
+    try {
+      const ok = await backend.cancelar(selData, elHora.value, slot, nomeSlot);
+      toast(ok ? 'Cadastro cancelado. A vaga está livre novamente.' : 'Não foi possível cancelar. Atualize a página e tente de novo.');
+    } catch (e) {
+      toast('Erro ao cancelar. Verifique a conexão e as regras do banco.');
     }
   }
 

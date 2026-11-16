@@ -57,3 +57,9 @@ footer{text-align:center;color:#555;font-size:.75rem;padding:24px 0 40px}
 
 /* ---- aviso de modo teste / erro de banco ---- */
 .modo.aviso{background:#3b2a00;border:1px solid #b07a00;color:#ffd27a;border-radius:12px;padding:12px 14px;font-size:.85rem;text-align:left;margin:0 0 16px}
+
+/* ---- vaga ocupada + cancelar ---- */
+.slot.ocupado{cursor:default;background:var(--ocup);border:1px solid var(--ocup)}
+.slot.ocupado .t{font-weight:600;word-break:break-word;flex:1}
+.cancelar{margin-left:auto;flex-shrink:0;background:transparent;border:1px solid #777;color:#ddd;border-radius:8px;padding:4px 8px;font-size:.75rem;cursor:pointer}
+.cancelar:hover{border-color:#ff6b6b;color:#ff6b6b}

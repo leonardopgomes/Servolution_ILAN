@@ -25,7 +25,7 @@ O GitHub Pages não guarda dados. Sem o Firebase, cada nome fica salvo só no ap
         "$hora": {
           ".validate": "$hora.matches(/^(10h|18h|20h)$/)",
           "$slot": {
-            ".write": "!data.exists() && newData.exists()",
+            ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists())",
             ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40 && $slot.matches(/^(plaquinha|visitante|conexao|oferta)_[1-6]$/)"
           }
         }
@@ -36,7 +36,7 @@ O GitHub Pages não guarda dados. Sem o Firebase, cada nome fica salvo só no ap
 ```
 
    O que essas regras garantem, **no servidor**:
-   - uma vaga só aceita gravação se estiver **vazia**; depois de reservada, ninguém consegue trocar ou apagar o nome pelo site;
+   - uma vaga só aceita um nome novo se estiver **vazia**; depois de reservada, ninguém consegue **trocar** o nome (só cancelar, e aí a vaga volta a ficar livre);
    - se duas pessoas tocarem na mesma vaga ao mesmo tempo, só a primeira é gravada;
    - só são aceitos datas, horários e vagas no formato esperado e nomes de até 40 caracteres.
 
@@ -48,7 +48,7 @@ O GitHub Pages não guarda dados. Sem o Firebase, cada nome fica salvo só no ap
 
 ### Observações
 - Não há PIN: qualquer pessoa com o link pode se cadastrar e imprimir. Serve para uso interno da igreja; não guarde dados sensíveis.
-- Como as regras impedem apagar nomes pelo site, **corrigir um cadastro errado** é feito pelo console: Realtime Database > aba **Dados** > `escala` > data > horário > vaga > ícone de exclusão (ou digite o nome correto no lugar).
+- **Cancelar cadastro:** o voluntário toca em **Cancelar** na própria vaga e precisa digitar em "Seu nome" o mesmo nome do cadastro. Não há login, então isso evita cancelamentos acidentais, mas não é uma proteção contra quem queira burlar. Se alguém precisar de ajuda, também dá para apagar a vaga pelo console: Realtime Database > aba **Dados** > `escala` > data > horário > vaga > ícone de exclusão.
 - As datas antigas ficam guardadas. Para limpar o histórico, exclua os nós de datas passadas no mesmo painel quando quiser.
 
 ## 2) Publicar no GitHub Pages
@@ -60,7 +60,7 @@ O GitHub Pages não guarda dados. Sem o Firebase, cada nome fica salvo só no ap
 ## Como funciona
 - O calendário mostra só quintas e domingos, de hoje em diante. Quinta: apenas 20h. Domingo: 10h, 18h ou 20h.
 - Os nomes ficam gravados na data e na vaga escolhidas, e a lista "Já cadastrados nesta data" mostra todos.
-- Vaga ocupada fica bloqueada; só vagas livres aceitam novo nome.
+- Vaga ocupada fica bloqueada; só vagas livres aceitam novo nome. O voluntário pode cancelar o próprio cadastro (botão **Cancelar**) e a vaga volta a ficar livre.
 - **Imprimir** gera o PDF da data selecionada: uma página por horário (3 no domingo, 1 na quinta), com **Data** e **Início** (horário do culto) já preenchidos.
 - Vagas livres, Ministro, Término, Púlpito, Contagem e todo o Relatório saem em branco, para preenchimento manual.
 - A impressão **não apaga** os nomes: o histórico de cada data permanece.
