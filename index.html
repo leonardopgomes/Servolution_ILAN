@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Servolution – Escala de Voluntários</title>
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <div>
+      <h1>Servolution</h1>
+      <p class="sub">E S C A L A &nbsp;·&nbsp; Escolha o seu lugar para servir</p>
+    </div>
+    <img src="logo.png" alt="ILAN Church" class="logo" onerror="this.style.display='none'">
+  </header>
+
+  <main>
+    <section class="card">
+      <label for="nome">Seu nome</label>
+      <input id="nome" type="text" maxlength="40" placeholder="Digite seu nome" autocomplete="name">
+    </section>
+
+    <section class="card">
+      <label>Data (quintas e domingos)</label>
+      <div class="cal-topo">
+        <button type="button" id="mesAnt" class="nav" aria-label="Mês anterior">‹</button>
+        <strong id="mesTitulo"></strong>
+        <button type="button" id="mesProx" class="nav" aria-label="Próximo mês">›</button>
+      </div>
+      <div id="cal" class="cal"></div>
+      <p id="dataSel" class="data-sel"></p>
+
+      <label for="horario">Horário</label>
+      <select id="horario"></select>
+      <p class="dica">Toque em um campo <b>livre</b> para ocupá-lo com o seu nome. Campos preenchidos ficam bloqueados. Os pontos no calendário indicam datas que já têm voluntários.</p>
+    </section>
+
+    <div id="grade"></div>
+
+    <section class="card">
+      <h2 class="tit-lista">Já cadastrados nesta data</h2>
+      <div id="lista"></div>
+    </section>
+
+    <section class="acoes">
+      <button id="btnZap" class="btn zap">Compartilhar no WhatsApp</button>
+      <button id="btnImprimir" class="btn principal">Imprimir (gerar PDF desta data)</button>
+    </section>
+    <p id="modo" class="modo"></p>
+  </main>
+
+  <footer>ILAN Church · Servolution</footer>
+  <div id="toast" role="status"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
